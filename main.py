@@ -35,7 +35,6 @@ for i in range(ilength):
         cvv='00'+cvv
     elif len(cvv)==2:
         cvv='0'+cvv
-    print(cvv)
     driver.get(plink)
     main_page=driver.current_window_handle
     driver.implicitly_wait(10)
@@ -58,8 +57,9 @@ for i in range(ilength):
     dc_btn=driver.find_element_by_xpath('//*[@id="main_wrapper"]/div/div[2]/div/div[2]/div[2]/div[2]/ul/li[2]/a/span[2]')
     dc_btn.click()
     driver.close()
+
     
-    cardno=cardno_list[i]
+    #cardno=cardno_list[i]
     
     
     # cardno=cardno_list[i]
@@ -95,4 +95,6 @@ for i in range(ilength):
     # payment_status=driver.find_element_by_xpath('/html/body/div/div/div/div/div/div[1]/div[1]').text
     # payment_id=driver.find_element_by_xpath('/html/body/div/div/div/div/div/div[1]/div[2]').text
     # print(payment_status,payment_id)
+
+driver.quit()
 
