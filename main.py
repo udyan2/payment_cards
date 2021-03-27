@@ -1,6 +1,8 @@
 from selenium import webdriver
 import getinfo
+import time
 
+main_start_time = time.time()
 
 cardno_list, exp_list, cvv_list, ipin_list, ilength = getinfo.info()
 
@@ -25,6 +27,7 @@ ilength=2
 
 for i in range(ilength):
     
+    payment_start_time=time.time()
     driver=webdriver.Chrome()
     exp=str(exp_list[i])
     expyr=exp[0:2]
@@ -56,7 +59,7 @@ for i in range(ilength):
     
     dc_btn=driver.find_element_by_xpath('//*[@id="main_wrapper"]/div/div[2]/div/div[2]/div[2]/div[2]/ul/li[2]/a/span[2]')
     dc_btn.click()
-    driver.close()
+   
 
     
     #cardno=cardno_list[i]
@@ -95,6 +98,15 @@ for i in range(ilength):
     # payment_status=driver.find_element_by_xpath('/html/body/div/div/div/div/div/div[1]/div[1]').text
     # payment_id=driver.find_element_by_xpath('/html/body/div/div/div/div/div/div[1]/div[2]').text
     # print(payment_status,payment_id)
-
+    payment_end_time=time.time()
+    payment_time_elapsed=payment_end_time-payment_start_time
+    print("Payment",i,"Time Elapsed: ",payment_time_elapsed)
+    driver.close()
+    
 driver.quit()
+
+main_end_time=time.time()
+main_time_elapsed=main_end_time-main_start_time
+print("Total time elapsed:", main_time_elapsed)
+
 
