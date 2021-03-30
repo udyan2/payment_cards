@@ -40,18 +40,18 @@ o_exp_list=[]
 o_cvv_list=[]
 o_ipin_list=[]
 status=[]
+transaction_id_list=[]
 t_time_list=[]
 
 #driver=webdriver.Chrome("C:/Program Files/ChromeDriver/chromedriver.exe")
-ilength=2
 
 for i in range(start_index,ilength):
     
     payment_start_time=time.time()
     driver=webdriver.Chrome()
     exp=str(exp_list[i])
-    expyr=exp[0:2]
-    expmm=exp[3:8]
+    expmm=exp[0:2]
+    expyr=exp[3:8]
     
     cvv=str(cvv_list[i])
     if len(cvv)==1:
@@ -60,7 +60,7 @@ for i in range(start_index,ilength):
         cvv='0'+cvv
     driver.get(plink)
     main_page=driver.current_window_handle
-    driver.implicitly_wait(10)
+    driver.implicitly_wait(20)
     #driver.find_element_by_xpath("/html/body/div/div/div/div/div/div[2]/div[3]/a").click()
     
     pn_but=driver.find_element_by_xpath("/html/body/div/div/div/div/div/div[2]/div[3]/a")
@@ -74,8 +74,12 @@ for i in range(start_index,ilength):
     phone_el=driver.find_element_by_name("customerNumber")
     phone_el.send_keys(phone)
     
+    time.sleep(0.5)
+    
     ctp_btn=driver.find_element_by_xpath('//*[@id="main_wrapper"]/div/div[2]/div/div[2]/div[1]/div[2]/div[4]/a')
     ctp_btn.click()
+    
+    time.sleep(0.5)
     
     dc_btn=driver.find_element_by_xpath('//*[@id="main_wrapper"]/div/div[2]/div/div[2]/div[2]/div[2]/ul/li[2]/a/span[2]')
     dc_btn.click()
@@ -86,6 +90,7 @@ for i in range(start_index,ilength):
     cardno_el=driver.find_element_by_xpath('/html/body/div/div/div/div[2]/div/div[2]/div[2]/div[2]/div/div[1]/input')
     cardno_el.send_keys(cardno)
     o_cardno_list.append(cardno)
+    time.sleep(0.5)
     expmm=expmm
     expmm_el=driver.find_element_by_name('monthinput')
     expmm_el.send_keys(expmm)
@@ -93,14 +98,17 @@ for i in range(start_index,ilength):
     expyr_el=driver.find_element_by_name('yearinput')
     expyr_el.send_keys(expyr)
     o_exp_list.append(expmm+'/'+expyr)
+    time.sleep(0.5)
     cvv=cvv
     cvv_el=driver.find_element_by_name('cvvinput')
     cvv_el.send_keys(cvv)
     o_cvv_list.append(cvv)
-    
+    time.sleep(0.5)
     cardholder=name
     cardholder_el=driver.find_element_by_name('cardHolder')
     cardholder_el.send_keys(cardholder)
+    
+    time.sleep(1)
     
     paynow_el=driver.find_element_by_xpath('/html/body/div/div/div/div[2]/div/div[2]/div[2]/div[2]/div/div[4]/a')
     paynow_el.click()
@@ -111,25 +119,51 @@ for i in range(start_index,ilength):
     if(mode==1):
         ipin=ipin_list[i]
         ipin_el=driver.find_element_by_name('txtipin') 
+        time.sleep(1)
         ipin_el.send_keys(ipin)
+        time.sleep(1)
         submit_btn=driver.find_element_by_id('btnverify')
         submit_btn.click()
-        driver.switch_to.window(main_page)
+        while "trans_id=" not in driver.current_url:
+            if "failure" in driver.current_url:
+                break
+            pass
+        url=driver.current_url
+        print("\nPayment", i, "Details: ")
+        print(url)
+        #driver.switch_to.window(main_page)
+    
     
     else:
-        time.sleep(10)
+        checkotp=input("Payment Completed (0:No, 1:Yes):")
+        while "trans_id=" not in driver.current_url:
+            pass
+        url=driver.current_url
+        print("\nPayment", i, "Details: ")
+        print(url)
     
-    
-    
-    
-    
-    payment_status=driver.find_element_by_xpath('/html/body/div/div/div/div/div/div[1]/div[1]').text
-    payment_id=driver.find_element_by_xpath('/html/body/div/div/div/div/div/div[1]/div[2]').text
-    print(payment_status,payment_id)
-    status.append(payment_status)
     
     payment_end_time=time.time()
     payment_time_elapsed=payment_end_time-payment_start_time
+    
+    if "success" in url:
+        status.append("Success")
+        print("Payment",i,"Success")
+        transaction_id=url[((url.index("trans_id"))+15):]
+        transaction_id_list.append(transaction_id)
+    elif "Failure" or "failure" in url:
+        status.append("Fail")
+        print("Payment",i,"Fail")
+        transaction_id=url[((url.index("trans_id"))+15):]
+        transaction_id_list.append(transaction_id)
+    else:
+        status.append("Status Unknown")
+        print("Payment",i,"Status Unknown")
+        transaction_id="NA"
+        transaction_id_list.append(transaction_id)
+        
+    print("Transaction ID:", transaction_id)
+    #payment_id=driver.find_element_by_xpath('/html/body/div/div/div/div/div/div[1]/div[2]').text
     t_time_list.append(payment_time_elapsed)
     print("Payment",i,"Time Elapsed: ",payment_time_elapsed)
     driver.close()
@@ -137,7 +171,7 @@ for i in range(start_index,ilength):
 driver.quit()
 main_end_time=time.time()
 main_time_elapsed=main_end_time-main_start_time
-gsinfo.sendinfo(o_cardno_list, o_exp_list, o_cvv_list, t_time_list, status, main_time_elapsed, pamount)
-print("Total time elapsed:", main_time_elapsed)
+gsinfo.sendinfo(o_cardno_list, o_exp_list, o_cvv_list, transaction_id_list, t_time_list, status, main_time_elapsed, pamount)
+print("\nTotal time elapsed:", main_time_elapsed)
 
 
