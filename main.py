@@ -16,6 +16,9 @@ main_start_time = time.time()
 #input lists
 cardno_list, exp_list, cvv_list, ipin_list, ilength = gsinfo.getinfo()
 
+#Creating Report Output Headers
+gsinfo.repheader() 
+
 def pinwin():
     for handle in driver.window_handles: 
         if handle != main_page: 
@@ -162,6 +165,9 @@ for i in range(start_index,ilength):
     print("Transaction ID:", transaction_id)
     #payment_id=driver.find_element_by_xpath('/html/body/div/div/div/div/div/div[1]/div[2]').text
     t_time_list.append(payment_time_elapsed)
+    
+    gsinfo.exwrite(o_cardno_list[i], o_exp_list[i], o_cvv_list[i], transaction_id_list[i], t_time_list[i], status, pamount)
+    
     print("Payment",i,"Time Elapsed: ",payment_time_elapsed)
     driver.close()
     driver.quit()
@@ -169,7 +175,8 @@ for i in range(start_index,ilength):
 #driver.quit()
 main_end_time=time.time()
 main_time_elapsed=main_end_time-main_start_time
-gsinfo.sendinfo(o_cardno_list, o_exp_list, o_cvv_list, transaction_id_list, t_time_list, status, main_time_elapsed, pamount)
+#gsinfo.sendinfo(o_cardno_list, o_exp_list, o_cvv_list, transaction_id_list, t_time_list, status, main_time_elapsed, pamount)
+gsinfo.summary(status, pamount, main_time_elapsed)
 print("\nTotal time elapsed:", main_time_elapsed)
 
 
