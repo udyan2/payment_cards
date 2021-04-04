@@ -4,7 +4,7 @@ import time
 import sys
 
 passw=input("Enter Password: ")
-fobj=open("C:/Users/AVITA/Documents/payment_cards/passw.txt","r")
+fobj=open("passw.txt","r")
 if passw==fobj.readline():
     "Access Granted"
 else:
@@ -14,7 +14,7 @@ else:
 main_start_time = time.time()
 
 #input lists
-cardno_list, exp_list, cvv_list, ipin_list, ilength = gsinfo.getinfo()
+cardno_list, exp_list, cvv_list, ipin_list, ilength, name_list, email_list, phone_list = gsinfo.getinfo2()
 
 #Creating Report Output Headers
 gsinfo.repheader() 
@@ -28,14 +28,14 @@ def pinwin():
 #initialization of variables   
 plink=input("Enter the payment Link: ")
 pamount=input("Enter the payment amount: ")
-name_1=input("Enter the name: ")
-email_1=input("Enter the email: ")
-phone_1=input("Enter the phone number: ")
+# name_1=input("Enter the name: ")
+# email_1=input("Enter the email: ")
+# phone_1=input("Enter the phone number: ")
 mode=int(input("Enter Mode (1 = IPIN, 2 =  OTP): "))
 start_index=int(input("Enter start index of the excel file (0 for default): "))
-name=str(name_1)
-email=str(email_1)
-phone=str(phone_1)
+# name=str(name_1)
+# email=str(email_1)
+# phone=str(phone_1)
 
 #Output lists
 o_cardno_list=[]
@@ -50,6 +50,10 @@ t_time_list=[]
 
 for i in range(start_index,ilength):
     
+    name=str(name_list[i])
+    email=str(email_list[i])
+    phone=str(phone_list[i])
+        
     payment_start_time=time.time()
     driver=webdriver.Chrome()
     exp=str(exp_list[i])
@@ -61,6 +65,8 @@ for i in range(start_index,ilength):
         cvv='00'+cvv
     elif len(cvv)==2:
         cvv='0'+cvv
+        
+        
     driver.get(plink)
     main_page=driver.current_window_handle
     driver.implicitly_wait(20)
@@ -121,9 +127,16 @@ for i in range(start_index,ilength):
     driver.switch_to.window(pin_win)
     
     if(mode==1):
-        ipin=ipin_list[i]
+        ipin=str(ipin_list[i])
+        if len(ipin)==1:
+            ipin='000'+ipin
+        elif len(ipin)==2:
+            ipin='00'+ipin
+        elif len(ipin)==3:
+            ipin='0'+ipin
         ipin_el=driver.find_element_by_name('txtipin') 
         ipin_el.send_keys(ipin)
+        o_ipin_list.append(ipin)
         submit_btn=driver.find_element_by_id('btnverify')
         submit_btn.click()
         while "trans_id=" not in driver.current_url:
@@ -166,7 +179,7 @@ for i in range(start_index,ilength):
     #payment_id=driver.find_element_by_xpath('/html/body/div/div/div/div/div/div[1]/div[2]').text
     t_time_list.append(payment_time_elapsed)
     
-    gsinfo.exwrite(o_cardno_list[i], o_exp_list[i], o_cvv_list[i], transaction_id_list[i], t_time_list[i], status, pamount)
+    gsinfo.exwrite(o_cardno_list[i], o_exp_list[i], o_cvv_list[i], o_ipin_list[i], transaction_id_list[i], t_time_list[i], status[i], pamount)
     
     print("Payment",i,"Time Elapsed: ",payment_time_elapsed)
     driver.close()

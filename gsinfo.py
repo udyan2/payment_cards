@@ -3,16 +3,31 @@ from openpyxl import load_workbook
 from datetime import datetime
 
 
-def getinfo():
-    import_file_path = 'C:/Users/AVITA/Documents/Cards/cards.xlsx'
+# def getinfo():
+#     import_file_path = 'C:/Users/AVITA/Documents/Cards/cards.xlsx'
+#     df=pd.read_excel(import_file_path)
+#     cardno_list = df['CARDNO'].tolist()
+#     exp_list = df['EXP_DATE'].tolist()
+#     cvv_list = df['CVV'].tolist()
+#     ipin_list = df['IPIN'].tolist()
+#     ilength=(len(cardno_list))
+#     return(cardno_list, exp_list, cvv_list, ipin_list, ilength)
+
+
+def getinfo2():
+    import_file_path = 'cards.xlsx'
     df=pd.read_excel(import_file_path)
     cardno_list = df['CARDNO'].tolist()
     exp_list = df['EXP_DATE'].tolist()
     cvv_list = df['CVV'].tolist()
     ipin_list = df['IPIN'].tolist()
+    name_list = df['NAME'].tolist()
+    email_list = df['EMAIL'].tolist()
+    phone_list = df['PHONE'].tolist()
     ilength=(len(cardno_list))
-    return(cardno_list, exp_list, cvv_list, ipin_list, ilength)
+    return(cardno_list, exp_list, cvv_list, ipin_list, ilength, name_list, email_list, phone_list)
 
+#Generating the report at the end of the program execution
 # def sendinfo(o_cardno_list, o_exp_list, o_cvv_list, transaction_id_list, t_time_list, status, total_time, pamount):
 #     now=datetime.now()
 #     dt=now.strftime("%d/%m/%Y %H:%M:%S")
@@ -41,24 +56,24 @@ def getinfo():
 #     wb.save('import_file_path')
     
 def repheader():
-    import_file_path = 'C:/Users/AVITA/Documents/Cards/cardsreport.xlsx'
+    import_file_path = 'cardsreport.xlsx'
     wb = load_workbook(import_file_path)
     work_sheet = wb.active # Get active sheet
-    work_sheet.append(['CARDNO', 'EXP_DATE', 'CVV', 'TRANSACTION_ID', 'AMOUNT','TIME_TAKEN', 'STATUS'])
+    work_sheet.append(['CARDNO', 'EXP_DATE', 'CVV', 'IPIN', 'AMOUNT', 'TRANSACTION_ID', 'TIME_TAKEN', 'STATUS'])
     wb.save(import_file_path)
     
     
-def exwrite(o_cardno_list, o_exp_list, o_cvv_list, transaction_id_list, t_time_list, status, total_time, pamount):
-    import_file_path = 'C:/Users/AVITA/Documents/Cards/cardsreport.xlsx'
+def exwrite(o_cardno_list, o_exp_list, o_cvv_list, o_ipin_list, transaction_id_list, t_time_list, status, pamount):
+    import_file_path = 'cardsreport.xlsx'
     wb = load_workbook(import_file_path)
     work_sheet = wb.active # Get active sheet
-    work_sheet.append([o_cardno_list, o_exp_list, o_cvv_list, transaction_id_list, pamount, t_time_list, status])
+    work_sheet.append([o_cardno_list, o_exp_list, o_cvv_list, o_ipin_list, pamount, transaction_id_list, t_time_list, status])
     wb.save(import_file_path)
     
 def summary(status, pamount, total_time):
     now=datetime.now()
     dt=now.strftime("%d/%m/%Y %H:%M:%S")
-    import_file_path = 'C:/Users/AVITA/Documents/Cards/cardsreport.xlsx'
+    import_file_path = 'cardsreport.xlsx'
     wb = load_workbook(import_file_path)
     work_sheet = wb.active # Get active sheet
     work_sheet.append(['Successfull Payments', status.count("Success")])
@@ -67,4 +82,4 @@ def summary(status, pamount, total_time):
     work_sheet.append(['Total Amount Paid', int(pamount)*int(status.count("Success"))])
     work_sheet.append(['Total Time Taken', total_time])
     work_sheet.append(['Date, Time', dt])
-    wb.save('import_file_path')  
+    wb.save(import_file_path)  
