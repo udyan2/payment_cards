@@ -4,7 +4,7 @@ import time
 import sys
 
 passw=input("Enter Password: ")
-fobj=open("passw.txt","r")
+fobj=open("C:/Users/AVITA/Documents/payment_cards/passw.txt","r")
 if passw==fobj.readline():
     "Access Granted"
 else:
@@ -14,7 +14,7 @@ else:
 main_start_time = time.time()
 
 #input lists
-cardno_list, exp_list, cvv_list, ipin_list, ilength, name_list, email_list, phone_list = gsinfo.getinfo2()
+cardno_list, exp_list, cvv_list, ipin_list, ilength, name_list, email_list, phone_list = gsinfo.getinfo()
 
 #Creating Report Output Headers
 gsinfo.repheader() 
@@ -28,14 +28,8 @@ def pinwin():
 #initialization of variables   
 plink=input("Enter the payment Link: ")
 pamount=input("Enter the payment amount: ")
-# name_1=input("Enter the name: ")
-# email_1=input("Enter the email: ")
-# phone_1=input("Enter the phone number: ")
 mode=int(input("Enter Mode (1 = IPIN, 2 =  OTP): "))
 start_index=int(input("Enter start index of the excel file (0 for default): "))
-# name=str(name_1)
-# email=str(email_1)
-# phone=str(phone_1)
 
 #Output lists
 o_cardno_list=[None for x in range(ilength)]
@@ -46,15 +40,13 @@ status=[None for x in range(ilength)]
 transaction_id_list=[None for x in range(ilength)]
 t_time_list=[None for x in range(ilength)]
 
-#driver=webdriver.Chrome("C:/Program Files/ChromeDriver/chromedriver.exe")
-
 for i in range(start_index,ilength):
     
     name=str(name_list[i])
     email=str(email_list[i])
     phone=str(phone_list[i])
         
-    payment_start_time=time.time()
+    
     driver=webdriver.Chrome()
     exp=str(exp_list[i])
     expmm=exp[0:2]
@@ -70,8 +62,8 @@ for i in range(start_index,ilength):
     driver.get(plink)
     main_page=driver.current_window_handle
     driver.implicitly_wait(20)
-    #driver.find_element_by_xpath("/html/body/div/div/div/div/div/div[2]/div[3]/a").click()
-    
+
+    payment_start_time=time.time()
     pn_but=driver.find_element_by_xpath("/html/body/div/div/div/div/div/div[2]/div[3]/a")
     pn_but.click()
     
@@ -160,23 +152,22 @@ for i in range(start_index,ilength):
     payment_time_elapsed=payment_end_time-payment_start_time
     
     if "success" in url:
-        status.append("Success")
+        status[i]="Success"
         print("Payment",i,"Success")
         transaction_id=url[((url.index("trans_id"))+15):]
         transaction_id_list[i]=transaction_id
     elif "Failure" or "failure" in url:
-        status.append("Fail")
+        status[i]="Fail"
         print("Payment",i,"Fail")
         transaction_id=url[((url.index("trans_id"))+15):]
         transaction_id_list[i]=transaction_id
     else:
-        status.append("Status Unknown")
+        status[i]="Status Unknown"
         print("Payment",i,"Status Unknown")
         transaction_id="NA"
         transaction_id_list[i]=transaction_id
         
     print("Transaction ID:", transaction_id)
-    #payment_id=driver.find_element_by_xpath('/html/body/div/div/div/div/div/div[1]/div[2]').text
     t_time_list[i]=payment_time_elapsed
     
     gsinfo.exwrite(o_cardno_list[i], o_exp_list[i], o_cvv_list[i], o_ipin_list[i], transaction_id_list[i], t_time_list[i], status[i], pamount)
@@ -185,10 +176,8 @@ for i in range(start_index,ilength):
     driver.close()
     driver.quit()
     
-#driver.quit()
 main_end_time=time.time()
 main_time_elapsed=main_end_time-main_start_time
-#gsinfo.sendinfo(o_cardno_list, o_exp_list, o_cvv_list, transaction_id_list, t_time_list, status, main_time_elapsed, pamount)
 gsinfo.summary(status, pamount, main_time_elapsed)
 print("\nTotal time elapsed:", main_time_elapsed)
 
