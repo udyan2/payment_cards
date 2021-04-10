@@ -2,15 +2,18 @@ from selenium import webdriver
 import gsinfo
 import time
 import sys
+import getpass
+
+usern=getpass.getuser()
 
 passw=input("Enter Password: ")
-fobj=open("C:/Users/AVITA/Documents/payment_cards/passw.txt","r")
+fobj=open("C:/Users/"+usern+"/Documents/payment_cards/passw.txt","r")
 if passw==fobj.readline():
     "Access Granted"
 else:
     print("Access Denied: ")
     sys.exit()
-    
+
 main_start_time = time.time()
 
 #input lists
