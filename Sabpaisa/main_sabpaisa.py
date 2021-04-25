@@ -9,7 +9,7 @@ licn.checkp(inp)
 main_start_time = time.time()
 
 #input lists
-cardno_list, exp_list, cvv_list, ipin_list, ilength, name_list, email_list, phone_list = gsinfo.getinfo2()
+cardno_list, exp_list, cvv_list, ipin_list, ilength, name_list, email_list, phone_list = gsinfo.getinfo()
 
 #Creating Report Output Headers
 gsinfo.repheader() 
@@ -17,14 +17,8 @@ gsinfo.repheader()
 #initialization of variables   
 plink=input("Enter the payment Link: ")
 pamount=input("Enter the payment amount: ")
-# name_1=input("Enter the name: ")
-# email_1=input("Enter the email: ")
-# phone_1=input("Enter the phone number: ")
 mode=int(input("Enter Mode (1 = IPIN, 2 =  OTP): "))
 start_index=int(input("Enter start index of the excel file (0 for default): "))
-# name=str(name_1)
-# email=str(email_1)
-# phone=str(phone_1)
 
 #Output lists
 o_cardno_list=[None for x in range(ilength)]
@@ -64,7 +58,6 @@ for i in range(start_index,ilength):
     driver.get(plink)
     main_page=driver.current_window_handle
     driver.implicitly_wait(20)
-    #driver.find_element_by_xpath("/html/body/div/div/div/div/div/div[2]/div[3]/a").click()
     
     name_el=driver.find_element_by_name("Applicant Name")
     name_el.send_keys(name)
@@ -75,12 +68,12 @@ for i in range(start_index,ilength):
     amount_el=driver.find_element_by_name("Payable Amount")
     amount_el.send_keys(pamount)
     
-    time.sleep(0.6)
+    #time.sleep(0.6)
     
     ctp_btn=driver.find_element_by_xpath('/html/body/div[3]/form/div[3]/ul/div[6]/div/span/button')
     ctp_btn.click()
     
-    time.sleep(0.8)
+    #time.sleep(0.8)
     
     rdc_btn=driver.find_element_by_xpath('/html/body/app-root/div/div/app-payment-method/div/div[1]/div[3]/a')
     rdc_btn.click()
@@ -91,7 +84,7 @@ for i in range(start_index,ilength):
     cardno_el.send_keys(cardno)
     o_cardno_list[i]="'"+cardno
     print("\nCard Number:",cardno)
-    time.sleep(0.7)
+    #time.sleep(0.7)
     expmm=expmm
     exp_el=driver.find_element_by_id('cc-exp-date')
     expf=expmm+expyr
@@ -99,17 +92,17 @@ for i in range(start_index,ilength):
         exp_el.send_keys(ch)
     
     o_exp_list[i]=expmm+'/'+expyr
-    time.sleep(0.4)
+    #time.sleep(0.4)
     cardholder=name
     cardholder_el=driver.find_element_by_id('card-holder-name')
     cardholder_el.send_keys(cardholder)
-    time.sleep(0.9)
+    #time.sleep(0.9)
     cvv=cvv
     cvv_el=driver.find_element_by_id('cc-cvc')
     cvv_el.send_keys(cvv)
     o_cvv_list[i]=cvv
     
-    time.sleep(1.2)
+    #time.sleep(1.2)
     
     paynow_el=driver.find_element_by_xpath('/html/body/app-root/div/div/app-rupay-debit-card/div/form/div[4]/div/button')
     paynow_el.click()
@@ -130,10 +123,11 @@ for i in range(start_index,ilength):
         ipin_el=driver.find_element_by_name('txtipin') 
         ipin_el.send_keys(ipin)
         o_ipin_list[i]=ipin
-        time.sleep(0.3)
+        #time.sleep(0.3)
         submit_btn=driver.find_element_by_id('btnverify')
         submit_btn.click()
-        time.sleep(4)
+        payment_end_time=time.time()
+        #time.sleep(4)
         
         # while "SUCCESS" or "FAILED" not in driver.find_element_by_xpath('/html/body/div[2]/form/div/table/tbody/tr[10]/td[2]').text:
         #     pass
@@ -146,12 +140,12 @@ for i in range(start_index,ilength):
             if "FAILED" in driver.find_element_by_xpath('/html/body/div[2]/form/div/table/tbody/tr[10]/td[2]').text:
                 break
             pass
+        payment_end_time=time.time()
         fstatus=driver.find_element_by_xpath('/html/body/div[2]/form/div/table/tbody/tr[10]/td[2]').text
         print("\nPayment", i, "Details: ")
         print(fstatus)
     
     fstatus=driver.find_element_by_xpath('/html/body/div[2]/form/div/table/tbody/tr[10]/td[2]').text
-    payment_end_time=time.time()
     payment_time_elapsed=payment_end_time-payment_start_time
     
     if "SUCCESS" in fstatus:
@@ -171,7 +165,6 @@ for i in range(start_index,ilength):
         transaction_id_list[i]=transaction_id
         
     print("Transaction ID:", transaction_id)
-    #payment_id=driver.find_element_by_xpath('/html/body/div/div/div/div/div/div[1]/div[2]').text
     t_time_list[i]=payment_time_elapsed
     
     gsinfo.exwrite(o_cardno_list[i], o_exp_list[i], o_cvv_list[i], o_ipin_list[i], transaction_id_list[i], t_time_list[i], status[i], pamount)

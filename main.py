@@ -66,9 +66,9 @@ for i in range(start_index,ilength):
     main_page=driver.current_window_handle
     driver.implicitly_wait(20)
 
-    payment_start_time=time.time()
     pn_but=driver.find_element_by_xpath("/html/body/div/div/div/div/div/div[2]/div[3]/a")
     pn_but.click()
+    payment_start_time=time.time()
     
     driver.find_element_by_name("customerName").clear()
     name_el=driver.find_element_by_name("customerName")
@@ -78,12 +78,12 @@ for i in range(start_index,ilength):
     phone_el=driver.find_element_by_name("customerNumber")
     phone_el.send_keys(phone)
     
-    time.sleep(0.8)
+    #time.sleep(0.8)
     
     ctp_btn=driver.find_element_by_xpath('//*[@id="main_wrapper"]/div/div[2]/div/div[2]/div[1]/div[2]/div[4]/a')
     ctp_btn.click()
     
-    time.sleep(0.6)
+    #time.sleep(0.6)
     
     dc_btn=driver.find_element_by_xpath('//*[@id="main_wrapper"]/div/div[2]/div/div[2]/div[2]/div[2]/ul/li[2]/a/span[2]')
     dc_btn.click()
@@ -95,7 +95,7 @@ for i in range(start_index,ilength):
     cardno_el.send_keys(cardno)
     o_cardno_list[i]="'"+cardno
     print("\nCard Number:",cardno)
-    time.sleep(0.7)
+    #time.sleep(0.7)
     expmm=expmm
     expmm_el=driver.find_element_by_name('monthinput')
     expmm_el.send_keys(expmm)
@@ -103,17 +103,17 @@ for i in range(start_index,ilength):
     expyr_el=driver.find_element_by_name('yearinput')
     expyr_el.send_keys(expyr)
     o_exp_list[i]=expmm+'/'+expyr
-    time.sleep(0.4)
+    #time.sleep(0.4)
     cvv=cvv
     cvv_el=driver.find_element_by_name('cvvinput')
     cvv_el.send_keys(cvv)
     o_cvv_list[i]=cvv
-    time.sleep(0.9)
+    #time.sleep(0.9)
     cardholder=name
     cardholder_el=driver.find_element_by_name('cardHolder')
     cardholder_el.send_keys(cardholder)
     
-    time.sleep(2)
+    #time.sleep(2)
     
     paynow_el=driver.find_element_by_xpath('/html/body/div/div/div/div[2]/div/div[2]/div[2]/div[2]/div/div[4]/a')
     paynow_el.click()
