@@ -32,14 +32,9 @@ o_ipin_list=[None for x in range(ilength)]
 status=[None for x in range(ilength)]
 transaction_id_list=[None for x in range(ilength)]
 t_time_list=[None for x in range(ilength)]
+error_msg_list=[None for x in range(ilength)]
 
 driver=webdriver.Chrome()
-# def pinwin():
-#     for handle in driver.window_handles: 
-#         if handle != main_page: 
-#             pin_page = handle
-#     return pin_page
-
 
 for i in range(start_index,ilength):
     
@@ -115,8 +110,8 @@ for i in range(start_index,ilength):
     # pin_win=pinwin()
     # driver.switch_to.window(pin_win)
     
-    order_no=driver.find_element_by_xpath('/html/body/form/section/div/div/div/div[1]/div[3]/span[2]').text
-    print("Order Number: "+order_no)
+    # order_no=driver.find_element_by_xpath('/html/body/form/section/div/div/div/div[1]/div[3]/span[2]').text
+    # print("Order Number: "+order_no)
     if(mode==1):
         ipin=str(ipin_list[i])
         if len(ipin)==1:
@@ -135,54 +130,68 @@ for i in range(start_index,ilength):
         payment_end_time=time.time()
         #time.sleep(4)
         
-        # while "SUCCESS" or "FAILED" not in driver.find_element_by_xpath('/html/body/div[2]/form/div/table/tbody/tr[10]/td[2]').text:
-        #     pass
-        # fstatus=driver.find_element_by_xpath('/html/body/div[2]/form/div/table/tbody/tr[10]/td[2]').text
+        while "mediaTransactionResponse" not in driver.current_url:
+            if "YES" in driver.page_source:
+                no_btn=driver.find_element_by_xpath('/html/body/form/div/div[1]/div/div/div/div/div/button[2]')
+                no_btn.click()
+                break
+            pass
+        if "Successful" in driver.page_source:
+            fstatus=driver.find_element_by_xpath('/html/body/section/div/div/div/div/div/div[9]/div/div/div[2]/label').text
+        else:
+            fstatus=driver.find_element_by_xpath('/html/body/section/div/div/div/div/div/div[11]/div/div/div[2]/label').text
+        # if "Successful" in driver.find_element_by_xpath('/html/body/section/div/div/div/div/div/div[9]/div/div/div[2]/label').text:
+        #     fstatus=driver.find_element_by_xpath('/html/body/section/div/div/div/div/div/div[9]/div/div/div[2]/label').text
+        # else:
+        #     fstatus=driver.find_element_by_xpath('/html/body/section/div/div/div/div/div/div[11]/div/div/div[2]/label').text
         # print("\nPayment", i, "Details: ")
-        # print(fstatus)
-    
-#     else:
-#         while "ViewClientResponse?" not in driver.current_url:
-#             if "FAILED" in driver.find_element_by_xpath('/html/body/div[2]/form/div/table/tbody/tr[10]/td[2]').text:
-#                 break
-#             pass
-#         payment_end_time=time.time()
-#         fstatus=driver.find_element_by_xpath('/html/body/div[2]/form/div/table/tbody/tr[10]/td[2]').text
-#         print("\nPayment", i, "Details: ")
-#         print(fstatus)
-    
-#     fstatus=driver.find_element_by_xpath('/html/body/div[2]/form/div/table/tbody/tr[10]/td[2]').text
-#     payment_time_elapsed=payment_end_time-payment_start_time
-    
-#     if "SUCCESS" in fstatus:
-#         status[i]="Success"
-#         print("Payment",i,"Success")
-#         transaction_id=driver.find_element_by_xpath('/html/body/div[2]/form/div/table/tbody/tr[2]/td[2]').text
-#         transaction_id_list[i]=transaction_id
-#     elif "FAILED" in fstatus:
-#         status[i]="Fail"
-#         print("Payment",i,"Fail")
-#         transaction_id=driver.find_element_by_xpath('/html/body/div[2]/form/div/table/tbody/tr[2]/td[2]').text
-#         transaction_id_list[i]=transaction_id
-#     else:
-#         status[i]="Status Unknown"
-#         print("Payment",i,"Status Unknown")
-#         transaction_id="NA"
-#         transaction_id_list[i]=transaction_id
+        print(fstatus)
         
-#     print("Transaction ID:", transaction_id)
-#     t_time_list[i]=payment_time_elapsed
+    else:
+        while "mediaTransactionResponse" not in driver.current_url:
+            if "YES" in driver.page_source:
+                no_btn=driver.find_element_by_xpath('/html/body/form/div/div[1]/div/div/div/div/div/button[2]')
+                no_btn.click()
+                break
+            pass
+        payment_end_time=time.time()
+        if "Successful" in driver.page_source:
+            fstatus=driver.find_element_by_xpath('/html/body/section/div/div/div/div/div/div[9]/div/div/div[2]/label').text
+        else:
+            fstatus=driver.find_element_by_xpath('/html/body/section/div/div/div/div/div/div[11]/div/div/div[2]/label').text
+        print(fstatus)
     
-#     gsinfo.exwrite(o_cardno_list[i], o_exp_list[i], o_cvv_list[i], o_ipin_list[i], transaction_id_list[i], t_time_list[i], status[i], pamount)
+    payment_time_elapsed=payment_end_time-payment_start_time
     
-#     print("Payment",i,"Time Elapsed: ",payment_time_elapsed)
-#     driver.close()
-#     driver.quit()
+    if "Successful" in fstatus:
+        status[i]="Success"
+        print("Payment",i,"Success")
+        transaction_id=driver.find_element_by_xpath('/html/body/section/div/div/div/div/div/div[5]/div/div/div[2]').text
+        transaction_id_list[i]=transaction_id
+    elif "Failed" in fstatus:
+        status[i]="Fail"
+        print("Payment",i,"Fail")
+        errormsg=driver.find_element_by_xpath('/html/body/section/div/div/div/div/div/div[4]/div/div/div[2]').text
+        print("Error Message: ", errormsg)
+        error_msg_list[i]=errormsg
+        transaction_id=driver.find_element_by_xpath('/html/body/section/div/div/div/div/div/div[6]/div/div/div[2]').text
+        transaction_id_list[i]=transaction_id
+    else:
+        status[i]="Status Unknown"
+        print("Payment",i,"Status Unknown")
+        transaction_id="NA"
+        transaction_id_list[i]=transaction_id
+        
+    print("Transaction ID:", transaction_id)
+    t_time_list[i]=payment_time_elapsed
     
-# #driver.quit()
-# main_end_time=time.time()
-# main_time_elapsed=main_end_time-main_start_time
-# #gsinfo.sendinfo(o_cardno_list, o_exp_list, o_cvv_list, transaction_id_list, t_time_list, status, main_time_elapsed, pamount)
-# gsinfo.summary(status, pamount, main_time_elapsed)
-# print("\nTotal time elapsed:", main_time_elapsed)
+    gsinfo.exwrite(o_cardno_list[i], o_exp_list[i], o_cvv_list[i], o_ipin_list[i], transaction_id_list[i], t_time_list[i], status[i], pamount, error_msg_list[i])
+    
+    print("Payment",i,"Time Elapsed: ",payment_time_elapsed)
+    
+driver.quit()
+main_end_time=time.time()
+main_time_elapsed=sum(t_time_list)
+gsinfo.summary(status, pamount, main_time_elapsed)
+print("\nTotal time elapsed:", main_time_elapsed)
 

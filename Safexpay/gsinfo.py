@@ -23,14 +23,14 @@ def getinfo():
 def repheader():
     wb = load_workbook(export_file_path)
     work_sheet = wb.active # Get active sheet
-    work_sheet.append(['CARDNO', 'EXP_DATE', 'CVV', 'IPIN', 'AMOUNT', 'TRANSACTION_ID', 'TIME_TAKEN', 'STATUS'])
+    work_sheet.append(['CARDNO', 'EXP_DATE', 'CVV', 'IPIN', 'AMOUNT', 'TRANSACTION_ID', 'TIME_TAKEN', 'STATUS', 'ERROR MESSAGE'])
     wb.save(export_file_path)
     
     
-def exwrite(o_cardno_list, o_exp_list, o_cvv_list, o_ipin_list, transaction_id_list, t_time_list, status, pamount):
+def exwrite(o_cardno_list, o_exp_list, o_cvv_list, o_ipin_list, transaction_id_list, t_time_list, status, pamount, error_msg):
     wb = load_workbook(export_file_path)
     work_sheet = wb.active # Get active sheet
-    work_sheet.append([o_cardno_list, o_exp_list, o_cvv_list, o_ipin_list, pamount, transaction_id_list, t_time_list, status])
+    work_sheet.append([o_cardno_list, o_exp_list, o_cvv_list, o_ipin_list, pamount, transaction_id_list, t_time_list, status, error_msg])
     wb.save(export_file_path)
     
 def summary(status, pamount, total_time):
