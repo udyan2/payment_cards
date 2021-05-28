@@ -21,7 +21,7 @@ gsinfo.repheader()
 #plink=input("Enter the payment Link: ")
 plink="file:///C:/Users/" + usern + "/Documents/Cards_safexpay/payment.html"
 pamount=input("Enter the payment amount: ")
-mode=int(input("Enter Mode (1 = IPIN, 2 =  OTP): "))
+mode=int(input("Enter Mode (1 = IPIN, 2 =  OTP, 3 = PNB): "))
 start_index=int(input("Enter start index of the excel file (0 for default): "))
 
 #Output lists
@@ -66,7 +66,6 @@ for i in range(start_index,ilength):
     phone_el=driver.find_element_by_name("mobileNo")
     phone_el.send_keys(phone)
     submit_btn=driver.find_element_by_css_selector('[value="Submit"]')
-    # submit_btn.click()
     driver.execute_script("arguments[0].click();", submit_btn)
     
     # amount_el=driver.find_element_by_name("Payable Amount")
@@ -112,6 +111,8 @@ for i in range(start_index,ilength):
     
     # order_no=driver.find_element_by_xpath('/html/body/form/section/div/div/div/div[1]/div[3]/span[2]').text
     # print("Order Number: "+order_no)
+
+#IPIN CARDS
     if(mode==1):
         ipin=str(ipin_list[i])
         if len(ipin)==1:
@@ -146,8 +147,9 @@ for i in range(start_index,ilength):
         #     fstatus=driver.find_element_by_xpath('/html/body/section/div/div/div/div/div/div[11]/div/div/div[2]/label').text
         # print("\nPayment", i, "Details: ")
         print(fstatus)
-        
-    else:
+
+#OTP CARDS 
+    elif mode==2:
         while "mediaTransactionResponse" not in driver.current_url:
             if "YES" in driver.page_source:
                 no_btn=driver.find_element_by_xpath('/html/body/form/div/div[1]/div/div/div/div/div/button[2]')
@@ -155,6 +157,38 @@ for i in range(start_index,ilength):
                 break
             pass
         payment_end_time=time.time()
+        if "Successful" in driver.page_source:
+            fstatus=driver.find_element_by_xpath('/html/body/section/div/div/div/div/div/div[9]/div/div/div[2]/label').text
+        else:
+            fstatus=driver.find_element_by_xpath('/html/body/section/div/div/div/div/div/div[11]/div/div/div[2]/label').text
+        print(fstatus)
+        
+#PNB CARDS
+    elif mode==3:
+        ipin=str(ipin_list[i])
+        if len(ipin)==1:
+            ipin='000'+ipin
+        elif len(ipin)==2:
+            ipin='00'+ipin
+        elif len(ipin)==3:
+            ipin='0'+ipin
+        time.sleep(0.2)
+        ipin_el=driver.find_element_by_name('pin') 
+        ipin_el.send_keys(ipin)
+        o_ipin_list[i]=ipin
+        expmm_select = Select(driver.find_element_by_id('month'))
+        expmm_select.select_by_value(expmm)
+        expyr_select = Select(driver.find_element_by_id('expYear'))
+        expyr_select.select_by_value(expyr[2:])
+        submit_btn=driver.find_element_by_id('submitButton')
+        submit_btn.click()
+        payment_end_time=time.time()
+        while "mediaTransactionResponse" not in driver.current_url:
+            if "YES" in driver.page_source:
+                no_btn=driver.find_element_by_xpath('/html/body/form/div/div[1]/div/div/div/div/div/button[2]')
+                no_btn.click()
+                break
+            pass
         if "Successful" in driver.page_source:
             fstatus=driver.find_element_by_xpath('/html/body/section/div/div/div/div/div/div[9]/div/div/div[2]/label').text
         else:
