@@ -43,7 +43,7 @@ def summary(status, pamount, total_time):
     work_sheet = wb.active # Get active sheet
     work_sheet.append(['Successfull Payments', status.count("Success")])
     work_sheet.append(['Failed Payments', status.count("Fail")])
-    work_sheet.append(['Total Payments', status.count("Pending")])
+    work_sheet.append(['Total Payments', status.count("Success")+status.count("Fail")])
     work_sheet.append(['Total Amount Paid', int(pamount)])
     work_sheet.append(['Total Time Taken', total_time])
     work_sheet.append(['Date, Time', dt])
