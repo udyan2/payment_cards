@@ -120,10 +120,12 @@ for i in range(start_index,ilength):
             cell.find_element_by_link_text(dobdd).click()
             break
     
-    time.sleep(8)   #captcha time     
-        
-    submit_btn=driver.find_element_by_css_selector('[value="Submit"]')
-    driver.execute_script("arguments[0].click();", submit_btn)
+    #time.sleep(8)   #captcha time     
+    
+    while "confirmpayment" not in driver.current_url:
+        pass
+    # submit_btn=driver.find_element_by_css_selector('[value="Submit"]')
+    # driver.execute_script("arguments[0].click();", submit_btn)
     
     # captcha_error=driver.find_elements_by_id("captchaValue-error")
     # if (len(captcha_error)>0):
@@ -159,10 +161,13 @@ for i in range(start_index,ilength):
     cvv_el=driver.find_element_by_id('cvd2')
     cvv_el.send_keys(cvv)
     o_cvv_list[i]=cvv
-    time.sleep(8)   #captcha time
-    paynow_el=driver.find_element_by_id('proceed_button')
-    paynow_el.click()
-    driver.implicitly_wait(15)
+
+    # time.sleep(8)   #captcha time
+    # paynow_el=driver.find_element_by_id('proceed_button')
+    # paynow_el.click()
+    while 'txtipin' not in driver.page_source or'otp' not in driver.page_source:
+        pass
+    # driver.implicitly_wait(15)
 
 #IPIN CARDS
     if(mode==1):
@@ -201,7 +206,7 @@ for i in range(start_index,ilength):
         elif "pending" in driver.page_source:
             fstatus="Failed"
         print(fstatus)
-    
+
     payment_time_elapsed=payment_end_time-payment_start_time
     
     if "Successful" in fstatus:
