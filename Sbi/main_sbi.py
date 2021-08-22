@@ -19,13 +19,8 @@ gsinfo.repheader()
 
 #initialization of variables   
 plink=input("Enter the payment Link: ")
-#invoice=input("Enter the invoice number: ")
-#pamount=input("Enter the payment amount: ")
-# dobdd=str(input("Enter the DOB Day: "))
-# dobmm=int(input("Enter the DOB Month(in Numerical): "))
-# dobyr=str(input("Enter the DOB Year: "))
 
-mode=int(input("Enter Mode (1 = IPIN, 2 =  OTP): "))
+mode=int(input("Enter Mode (1 = IPIN, 2 =  OTP, 3 = PNB, 4 = YES BANK): "))
 start_index=int(input("Enter start index of the excel file (0 for default): "))
 tamount=0
 
@@ -84,7 +79,7 @@ for i in range(start_index,ilength):
     category_btn.click()
     category_drp=driver.find_element_by_xpath('/html/body/div/section/div/div/div[1]/form/div/div/div[2]/div/div[2]/div/div/ul/li[2]')
     category_drp.click()
-    time.sleep(2)
+    time.sleep(1)
     
     name_el=driver.find_element_by_name("outref11")
     name_el.send_keys(name)
@@ -101,7 +96,7 @@ for i in range(start_index,ilength):
     name_el2.send_keys(name)
     invoice_el2=driver.find_element_by_name("mobileNo")
     invoice_el2.send_keys(phone)
-    email_el=driver.find_element_by_name("outref14")
+    email_el=driver.find_element_by_name("emailId")
     email_el.send_keys(email)
     
     #Calender Input
@@ -122,18 +117,15 @@ for i in range(start_index,ilength):
     
     #time.sleep(8)   #captcha time     
     
+    #cptch_el_cursor=driver.find_element_by_id("passline")
+    #cptch_el_cursor.send_keys("")
+    
+    captch_el=driver.find_element_by_id("captchaValue")
+    captch_el.send_keys("")
+    
     while "confirmpayment" not in driver.current_url:
         pass
-    # submit_btn=driver.find_element_by_css_selector('[value="Submit"]')
-    # driver.execute_script("arguments[0].click();", submit_btn)
-    
-    # captcha_error=driver.find_elements_by_id("captchaValue-error")
-    # if (len(captcha_error)>0):
-    #     while(len(driver.find_elements_by_id("captchaValue-error"))>0):
-    #         time.sleep(8) 
-    #         submit_btn=driver.find_element_by_css_selector('[value="Submit"]')
-    #         driver.execute_script("arguments[0].click();", submit_btn)
-    
+
     confirm_btn=driver.find_element_by_css_selector('[value="Confirm"]')
     driver.execute_script("arguments[0].click();", confirm_btn)
     
@@ -161,12 +153,13 @@ for i in range(start_index,ilength):
     cvv_el=driver.find_element_by_id('cvd2')
     cvv_el.send_keys(cvv)
     o_cvv_list[i]=cvv
-
-    # time.sleep(8)   #captcha time
-    # paynow_el=driver.find_element_by_id('proceed_button')
-    # paynow_el.click()
-    while 'txtipin' not in driver.page_source or'otp' not in driver.page_source:
-        pass
+    
+    cptch_el_cursor=driver.find_element_by_id("passline")
+    cptch_el_cursor.send_keys("")
+    
+    if mode==1 or mode==2:
+        while 'txtipin' not in driver.page_source or 'otp' not in driver.page_source:
+            pass
     # driver.implicitly_wait(15)
 
 #IPIN CARDS
@@ -177,7 +170,7 @@ for i in range(start_index,ilength):
         elif len(ipin)==2:
             ipin='00'+ipin
         elif len(ipin)==3:
-            ipin='0'+ipin
+                ipin='0'+ipin
         time.sleep(0.2)
         ipin_el=driver.find_element_by_name('txtipin') 
         ipin_el.send_keys(ipin)
@@ -206,6 +199,69 @@ for i in range(start_index,ilength):
         elif "pending" in driver.page_source:
             fstatus="Failed"
         print(fstatus)
+        
+#PNB CARDS
+    elif mode==3:
+        ipin=str(ipin_list[i])
+        if len(ipin)==1:
+            ipin='000'+ipin
+        elif len(ipin)==2:
+            ipin='00'+ipin
+        elif len(ipin)==3:
+            ipin='0'+ipin
+        time.sleep(0.2)
+        ipin_el=driver.find_element_by_name('pin') 
+        ipin_el.send_keys(ipin)
+        o_ipin_list[i]=ipin
+        expmm_select = Select(driver.find_element_by_id('month'))
+        expmm_select.select_by_value(expmm)
+        expyr_select = Select(driver.find_element_by_id('expYear'))
+        expyr_select.select_by_value(expyr[2:])
+        submit_btn=driver.find_element_by_id('submitButton')
+        submit_btn.click()
+        payment_end_time=time.time()
+        while "responseredirect" not in driver.current_url:
+            pass
+        payment_end_time=time.time()
+        if "successfully" in driver.page_source:
+            fstatus="Successful"
+        elif "pending" in driver.page_source:
+            fstatus="Failed"    
+        print(fstatus)
+        
+#YES BANK CARDS
+    elif mode==4:
+        ipin=str(ipin_list[i])
+        if len(ipin)==1:
+            ipin='000'+ipin
+        elif len(ipin)==2:
+            ipin='00'+ipin
+        elif len(ipin)==3:
+            ipin='0'+ipin
+        time.sleep(0.4)
+        # submit_btn=driver.find_element_by_css_selector('[value="ATM PIN"]')
+        # driver.execute_script("arguments[0].click();", submit_btn)
+        atm_pin_el=driver.find_element_by_xpath('/html/body/div/div/div/div[4]/section/label[2]/span')
+        atm_pin_el.click()
+        expdate_el = driver.find_element_by_id('expDate')
+        expdate=expmm+expyr
+        for ch in expdate:
+            expdate_el.send_keys(ch)
+        ipin_el=driver.find_element_by_name('pin') 
+        ipin_el.send_keys(ipin)
+        o_ipin_list[i]=ipin
+        submit_btn=driver.find_element_by_id('submitButtonIdForPin')
+        submit_btn.click()
+        payment_end_time=time.time()
+        while "responseredirect" not in driver.current_url:
+            pass
+        payment_end_time=time.time()
+        if "successfully" in driver.page_source:
+            fstatus="Successful"
+        elif "pending" in driver.page_source:
+            fstatus="Failed"    
+        print(fstatus)
+
 
     payment_time_elapsed=payment_end_time-payment_start_time
     
@@ -213,13 +269,7 @@ for i in range(start_index,ilength):
         status[i]="Success"
         print("Payment",i,"Success")
         transaction_id=driver.find_element_by_xpath('//*[@id="printdetailsformtop"]/div/div/div[2]/span/strong').text
-        transaction_id_list[i]=transaction_id
-        # try:
-        #     transaction_id=driver.find_element_by_xpath('/html/body/div/section/div/div/div/form[1]/div/div/div[2]/span/strong').text
-        #     transaction_id_list[i]=transaction_id
-        # except NoSuchElementException:
-        #     transaction_id=driver.find_element_by_xpath('html/body/div/section/div/div/div/div[2]/div/div[2]/span/strong').text
-        #     transaction_id_list[i]=transaction_id       
+        transaction_id_list[i]=transaction_id 
         tamount=tamount+amount_list[i]
     elif "Failed" in fstatus:
         status[i]="Fail"
@@ -229,7 +279,7 @@ for i in range(start_index,ilength):
     print("Transaction ID:", transaction_id)
     t_time_list[i]=payment_time_elapsed
     
-    gsinfo.exwrite(o_cardno_list[i], o_exp_list[i], o_cvv_list[i], o_ipin_list[i], transaction_id_list[i], t_time_list[i], status[i], amount_list[i])
+    gsinfo.exwrite(o_cardno_list[i], o_exp_list[i], o_cvv_list[i], o_ipin_list[i], transaction_id_list[i], t_time_list[i], status[i], amount_list[i], name, email, phone, dob, invoice, i)
     
     print("Payment",i,"Time Elapsed: ",payment_time_elapsed)
     

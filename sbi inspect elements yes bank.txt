@@ -1,0 +1,11 @@
+ATM PIN: /html/body/div/div/div/div[4]/section/label[2]/span
+
+STATIC PIN: /html/body/div/div/div/div[4]/section/label[3]/span
+	3D Secure Paswword: id: 'password'
+	Submit: id: 'submitButtonIdFor3D'
+OTP: /html/body/div/div/div/div[4]/section/label[1]/span
+	Send OTP BUTTON: id: 'triggerOtp'
+
+
+
+https://rupayhash.yappay.in/yesbissuerhashing.html
