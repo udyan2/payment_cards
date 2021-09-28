@@ -2,12 +2,12 @@ from selenium import webdriver
 from selenium.webdriver.support.ui import Select
 import gsinfo
 import time
-import licn
+import passchk
 import getpass
 usern=getpass.getuser()
 
-inp=input("Enter The Password: ")
-licn.checkp(inp)
+ipass=input("Enter The Password: ")
+passchk.checkp(ipass)
     
 main_start_time = time.time()
 
@@ -45,7 +45,6 @@ for i in range(start_index,ilength):
     pamount=str(amount_list[i])
     invoice=str(invoice_list[i])
         
-    #driver=webdriver.Chrome()
     exp=str(exp_list[i])
     expmm=exp[0:2]
     expyr=exp[3:7]
@@ -70,38 +69,38 @@ for i in range(start_index,ilength):
     driver.implicitly_wait(20)
     payment_start_time=time.time()
     
-    terms_chk=driver.find_element_by_id('proceedcheck_english')
-    terms_chk.click()
-    proceed_btn=driver.find_element_by_css_selector('[value="Proceed"]')
-    proceed_btn.click()
+    trm_chkbox=driver.find_element_by_id('proceedcheck_english')
+    trm_chkbox.click()
+    prcd_btn=driver.find_element_by_css_selector('[value="Proceed"]')
+    prcd_btn.click()
     
-    category_btn=driver.find_element_by_xpath('/html/body/div/section/div/div/div[1]/form/div/div/div[2]/div/div[2]/div/button')
-    category_btn.click()
-    category_drp=driver.find_element_by_xpath('/html/body/div/section/div/div/div[1]/form/div/div/div[2]/div/div[2]/div/div/ul/li[2]')
-    category_drp.click()
+    categ_btn=driver.find_element_by_xpath('/html/body/div/section/div/div/div[1]/form/div/div/div[2]/div/div[2]/div/button')
+    categ_btn.click()
+    categ_drp=driver.find_element_by_xpath('/html/body/div/section/div/div/div[1]/form/div/div/div[2]/div/div[2]/div/div/ul/li[2]')
+    categ_drp.click()
     time.sleep(1)
     
-    name_el=driver.find_element_by_name("outref11")
-    name_el.send_keys(name)
-    phone_el=driver.find_element_by_name("outref12")
-    phone_el.send_keys(phone)
-    invoice_el=driver.find_element_by_name("outref13")
+    namein_el=driver.find_element_by_id("outref11")
+    namein_el.send_keys(name)
+    iphone_el=driver.find_element_by_id("outref16")
+    iphone_el.send_keys(phone)
+    invoice_el=driver.find_element_by_id("outref17")
     invoice_el.send_keys(invoice)
-    email_el=driver.find_element_by_name("outref14")
-    email_el.send_keys(email)
-    amount_el=driver.find_element_by_name("outref15")
+    emailid_el=driver.find_element_by_id("outref18")
+    emailid_el.send_keys(email)
+    amount_el=driver.find_element_by_id("outref15")
     amount_el.send_keys(pamount)
     
-    name_el2=driver.find_element_by_id("cusName")
-    name_el2.send_keys(name)
-    invoice_el2=driver.find_element_by_name("mobileNo")
-    invoice_el2.send_keys(phone)
-    email_el=driver.find_element_by_name("emailId")
-    email_el.send_keys(email)
+    namein_el2=driver.find_element_by_id("cusName")
+    namein_el2.send_keys(name)
+    iphone_el2=driver.find_element_by_name("mobileNo")
+    iphone_el2.send_keys(phone)
+    emailid_el=driver.find_element_by_name("emailId")
+    emailid_el.send_keys(email)
     
     #Calender Input
-    calender_img=driver.find_element_by_xpath('/html/body/div[1]/section/div/div/div/form[2]/div[2]/div/div[3]/div[2]/div/div[2]/img')
-    calender_img.click()
+    cal_img=driver.find_element_by_xpath('/html/body/div[1]/section/div/div/div/form[2]/div[2]/div/div[3]/div[2]/div/div[2]/img')
+    cal_img.click()
     dobyr_select=Select(driver.find_element_by_xpath('/html/body/div[2]/div/div/select[2]'))
     dobyr_select.select_by_value(dobyr)
     dobmm=dobmm-1
@@ -114,11 +113,6 @@ for i in range(start_index,ilength):
         if cell.text == dobdd:
             cell.find_element_by_link_text(dobdd).click()
             break
-    
-    #time.sleep(8)   #captcha time     
-    
-    #cptch_el_cursor=driver.find_element_by_id("passline")
-    #cptch_el_cursor.send_keys("")
     
     captch_el=driver.find_element_by_id("captchaValue")
     captch_el.send_keys("")
@@ -157,8 +151,14 @@ for i in range(start_index,ilength):
     cptch_el_cursor=driver.find_element_by_id("passline")
     cptch_el_cursor.send_keys("")
     
-    if mode==1 or mode==2:
+    if mode==1 or mode==2 or mode==5:
         while 'txtipin' not in driver.page_source or 'otp' not in driver.page_source or 'authenticate' not in driver.current_url:
+            if('txtipin' in driver.page_source):
+                break
+            if('otp' in driver.page_source):
+                break
+            if('authenticate' in driver.current_url):
+                break
             pass
     # driver.implicitly_wait(15)
 

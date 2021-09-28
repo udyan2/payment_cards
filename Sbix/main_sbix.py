@@ -20,7 +20,7 @@ gsinfo.repheader()
 #initialization of variables   
 plink=input("Enter the payment Link: ")
 
-mode=int(input("Enter Mode (1 = IPIN, 2 =  OTP, 3 = PNB, 4 = YES BANK, 5 - EBIXOTP): "))
+mode=int(input("Enter Mode (1 = IPIN, 2 =  OTP, 3 = PNB, 4 = YES BANK): "))
 start_index=int(input("Enter start index of the excel file (0 for default): "))
 tamount=0
 
@@ -87,9 +87,9 @@ for i in range(start_index,ilength):
     phone_el.send_keys(phone)
     invoice_el=driver.find_element_by_name("outref13")
     invoice_el.send_keys(invoice)
-    email_el=driver.find_element_by_name("outref14")
+    email_el=driver.find_element_by_name("outref15")
     email_el.send_keys(email)
-    amount_el=driver.find_element_by_name("outref15")
+    amount_el=driver.find_element_by_name("outref16")
     amount_el.send_keys(pamount)
     
     name_el2=driver.find_element_by_id("cusName")
@@ -114,11 +114,6 @@ for i in range(start_index,ilength):
         if cell.text == dobdd:
             cell.find_element_by_link_text(dobdd).click()
             break
-    
-    #time.sleep(8)   #captcha time     
-    
-    #cptch_el_cursor=driver.find_element_by_id("passline")
-    #cptch_el_cursor.send_keys("")
     
     captch_el=driver.find_element_by_id("captchaValue")
     captch_el.send_keys("")
@@ -158,9 +153,8 @@ for i in range(start_index,ilength):
     cptch_el_cursor.send_keys("")
     
     if mode==1 or mode==2:
-        while 'txtipin' not in driver.page_source or 'otp' not in driver.page_source or 'authenticate' not in driver.current_url:
+        while 'txtipin' not in driver.page_source or 'otp' not in driver.page_source:
             pass
-    # driver.implicitly_wait(15)
 
 #IPIN CARDS
     if(mode==1):
@@ -260,17 +254,6 @@ for i in range(start_index,ilength):
             fstatus="Successful"
         elif "pending" in driver.page_source:
             fstatus="Failed"    
-        print(fstatus)
-        
-#EBIXCASHOTP
-    elif mode==5:
-        while "responseredirect" not in driver.current_url:
-            pass
-        payment_end_time=time.time()
-        if "successfully" in driver.page_source:
-            fstatus="Successful"
-        elif "pending" in driver.page_source:
-            fstatus="Failed"
         print(fstatus)
 
 
