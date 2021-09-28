@@ -157,8 +157,14 @@ for i in range(start_index,ilength):
     cptch_el_cursor=driver.find_element_by_id("passline")
     cptch_el_cursor.send_keys("")
     
-    if mode==1 or mode==2:
+    if mode==1 or mode==2 or mode==5:
         while 'txtipin' not in driver.page_source or 'otp' not in driver.page_source or 'authenticate' not in driver.current_url:
+            if('txtipin' in driver.page_source):
+                break
+            if('otp' in driver.page_source):
+                break
+            if('authenticate' in driver.current_url):
+                break
             pass
     # driver.implicitly_wait(15)
 
