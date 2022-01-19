@@ -35,7 +35,9 @@ transaction_id_list=[None for x in range(ilength)]
 t_time_list=[None for x in range(ilength)]
 error_msg_list=[None for x in range(ilength)]
 
-driver=webdriver.Chrome()
+opt=webdriver.ChromeOptions()
+opt.add_argument('--ignore-certificate-errors-spki-list')
+driver=webdriver.Chrome(options=opt)
 
 for i in range(start_index,ilength):
     
@@ -151,13 +153,16 @@ for i in range(start_index,ilength):
     cptch_el_cursor=driver.find_element_by_id("passline")
     cptch_el_cursor.send_keys("")
     
-    if mode==1 or mode==2 or mode==5:
-        while 'txtipin' not in driver.page_source or 'otp' not in driver.page_source or 'authenticate' not in driver.current_url:
-            if('txtipin' in driver.page_source):
+    if mode==1 or mode==2:
+        while 'txtipin' not in driver.page_source or 'otp' not in driver.page_source:
+            if(mode==1 and 'txtipin' in driver.page_source):
                 break
-            if('otp' in driver.page_source):
+            if(mode==2 and 'otp' in driver.page_source):
                 break
-            if('authenticate' in driver.current_url):
+            pass
+    if mode==5:
+         while 'authenticate' not in driver.current_url:
+            if(mode==5 and 'authenticate' in driver.current_url):
                 break
             pass
     # driver.implicitly_wait(15)
@@ -209,7 +214,8 @@ for i in range(start_index,ilength):
             ipin='00'+ipin
         elif len(ipin)==3:
             ipin='0'+ipin
-        time.sleep(0.2)
+        time.sleep(14)
+        driver.implicitly_wait(15)
         ipin_el=driver.find_element_by_name('pin') 
         ipin_el.send_keys(ipin)
         o_ipin_list[i]=ipin

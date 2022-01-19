@@ -35,7 +35,9 @@ transaction_id_list=[None for x in range(ilength)]
 t_time_list=[None for x in range(ilength)]
 error_msg_list=[None for x in range(ilength)]
 
-driver=webdriver.Chrome()
+opt=webdriver.ChromeOptions()
+opt.add_argument('--ignore-certificate-errors-spki-list')
+driver=webdriver.Chrome(options=opt)
 
 for i in range(start_index,ilength):
     
@@ -157,16 +159,20 @@ for i in range(start_index,ilength):
     cptch_el_cursor=driver.find_element_by_id("passline")
     cptch_el_cursor.send_keys("")
     
-    if mode==1 or mode==2 or mode==5:
-        while 'txtipin' not in driver.page_source or 'otp' not in driver.page_source or 'authenticate' not in driver.current_url:
-            if('txtipin' in driver.page_source):
+    if mode==1 or mode==2:
+        while 'txtipin' not in driver.page_source or 'otp' not in driver.page_source:
+            if(mode==1 and 'txtipin' in driver.page_source):
                 break
-            if('otp' in driver.page_source):
-                break
-            if('authenticate' in driver.current_url):
+            if(mode==2 and 'otp' in driver.page_source):
                 break
             pass
-    # driver.implicitly_wait(15)
+    if mode==5:
+         while 'authenticate' not in driver.current_url:
+            if(mode==5 and 'authenticate' in driver.current_url):
+                break
+            pass
+        
+    #driver.implicitly_wait(15)
 
 #IPIN CARDS
     if(mode==1):
